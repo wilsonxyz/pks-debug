@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="purchase-order-create">
 
-    <?= $this->render('_form', [
+    <?= $this->render('_tform', [
         'model' => $model,
         'details' => $details
     ]) ?>
