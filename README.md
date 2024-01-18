@@ -6,6 +6,6 @@
     <br>
 </p>
 
-this project is run by `yii serve`
-and direct go to url `http://localhost:8080/purchase-order/create` 
+this project is run by `yii serve` <br>
+and direct go to url `http://localhost:8080/purchase-order/create` <br>
 this project is using `wbraganca/yii2-dynamicform` and it could not replicate the item.
