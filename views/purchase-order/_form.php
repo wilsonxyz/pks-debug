@@ -10,6 +10,7 @@ use yii\helpers\Html;
 use yii\widgets\MaskedInput;
 use yii\widgets\ActiveForm;
 
+
 /** @var yii\web\View $this */
 /** @var app\models\PurchaseOrder $model */
 /** @var yii\widgets\ActiveForm $form */

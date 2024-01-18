@@ -1,3 +1,5 @@
+<!-- on your view layout file HEAD section -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
 <?php
 
 use yii\helpers\Html;
