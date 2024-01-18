@@ -18,13 +18,13 @@ use yii\widgets\ActiveForm;
 $js = '
 jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
     jQuery(".dynamicform_wrapper .item-title").each(function(index) {
-        jQuery(this).html("Item No: " + (index + 1))
+        jQuery(this).html("Item : " + (index + 1))
     });
 });
 
 jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
     jQuery(".dynamicform_wrapper .item-title").each(function(index) {
-        jQuery(this).html("Item No: " + (index + 1))
+        jQuery(this).html("Item : " + (index + 1))
     });
 });
 ';
@@ -126,7 +126,7 @@ $this->registerJs($js);
                 <thead>
                     <tr>
                         <th >
-                            <span class="item-title" style="color: blue;">Item No: <?= ($i+1) ?></span> 
+                            <span class="item-title" style="color: blue;">Item : <?= ($i+1) ?></span> 
                         </th>
                         <th></th>
                         <th></th>
