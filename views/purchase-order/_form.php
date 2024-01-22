@@ -17,13 +17,13 @@ use yii\widgets\ActiveForm;
 
 $js = '
 jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
-    jQuery(".dynamicform_wrapper .card-title-item").each(function(index) {
+    jQuery(".dynamicform_wrapper .card-item-title").each(function(index) {
         jQuery(this).html("Item : " + (index + 1))
     });
 });
 
 jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
-    jQuery(".dynamicform_wrapper .card-title-item").each(function(index) {
+    jQuery(".dynamicform_wrapper .card-item-title").each(function(index) {
         jQuery(this).html("Item : " + (index + 1))
     });
 });
@@ -91,7 +91,7 @@ $this->registerJs($js);
         'insertButton' => '.add-item',               // css class
         'deleteButton' => '.remove-item',            // css class
         'model' => $details[0],
-        'formId' => 'form-purchase-order-details',
+        'formId' => 'form-purchase-order',
         'formFields' => [
             'id',
             'item_id',
@@ -112,177 +112,173 @@ $this->registerJs($js);
             <span style="font-size: large;">&nbsp; Items Sparepart</span>
             <button type="button" class="float-right add-item btn btn-success btn-sm">
                 <i class="fa fa-plus"></i> Add item</button>
-            <div class="clearfix"></div>
         </div>
-        
-        <div class="card-body"> 
-        <div class="container-items"> <!-- widgetContainer -->
+        <div class="card-body container-items">
             <?php foreach ($details as $i => $detail): ?>
-            <div class="item row">
-                <div class="card">
-                    <div class="card-header"> 
-                        <span class="card-title-item" style="color: blue;">Item : <?= ($i+1) ?></span> 
-                        <button type="button" class="float-right remove-item btn btn-danger btn-xs">
-                            <i class="fa fa-minus"></i></button>
-                        <div class="clearfix"></div>
-                    </div> <!-- card-header -->
-                    <div class="card-body">
-                        <?php
-                        // necessary for update action.
-                        if (! $detail->isNewRecord) {
-                            echo Html::activeHiddenInput($detail, "[{$i}]id");
-                        }
-                        ?>
-                        <div class="row">
-                            <div class="col-4">
-                                <?= $form->field($detail, "[{$i}]item_id")->widget(Select2::class, [
-                                    'data' => ArrayHelper::map(\app\models\ItemSparepart::find()->where(['listed' => 1])->all(), 'id', 'name'),
-                                    'language' => 'en',
-                                    'options' => ['placeholder' => 'Select item ...'],
-                                    'pluginOptions' => [
-                                        'allowClear' => true,
-                                    ],
-                                ]);
-                                ?>
-                            </div>
-                            <div class="col-4">
-                                <?= $form->field($detail, "[{$i}]brand")->textInput(); ?>
-                            </div>
-                            <div class="col-4">
-                                <?= $form->field($detail, "[{$i}]serial_no")->textInput(); ?>
-                            </div>
-                        </div> <!-- row -->
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <?= $form->field($detail, "[{$i}]qty")->widget(MaskedInput::class,
-                                    [
-                                        'clientOptions' => [
-                                            'alias' => 'decimal',
-                                            'groupSeparator' => ',',
-                                            'digits' => 2,
-                                            'autoGroup' => true,
-                                            'removeMaskOnSubmit' => true,
-                                            'rightAlign' => false,
-                                        ],
-                                        'options' => [
-                                            'class' => 'form-control',
-                                            'onchange' => 'calculateSubtotal($(this))',
-                                        ]
-                                    ]) ?>
-                            </div>
-                            <div class="col-sm-4">
-                                <?= $form->field($detail, "[{$i}]price")->widget(MaskedInput::class,
-                                    [
-                                        'clientOptions' => [
-                                            'alias' => 'numeric',
-                                            'groupSeparator' => ',',
-                                            'digits' => 2,
-                                            'autoGroup' => true,
-                                            'removeMaskOnSubmit' => true,
-                                            'rightAlign' => false,
-                                        ],
-                                        'options' => [
-                                            'class' => 'form-control',
-                                            'onchange' => 'calculateSubtotal($(this))',
-                                        ]
-                                    ]) ?>
-                            </div>
-                            <div class="col-sm-2">
-                                <?= $form->field($detail, "[{$i}]disc_percent")->widget(MaskedInput::class,
-                                    [
-                                        'clientOptions' => [
-                                            'alias' => 'numeric',
-                                            'groupSeparator' => ',',
-                                            'digits' => 2,
-                                            'autoGroup' => true,
-                                            'removeMaskOnSubmit' => true,
-                                            'rightAlign' => false,
-                                        ],
-                                        'options' => [
-                                            'class' => 'form-control',
-                                            'onchange' => 'calculateSubtotal($(this))',
-                                        ]
-                                    ]) ?>
-                            </div>
-                            <div class="col-sm-3">
-                                <?= $form->field($detail, "[{$i}]disc_rp")->widget(MaskedInput::class,
-                                    [
-                                        'clientOptions' => [
-                                            'alias' => 'numeric',
-                                            'groupSeparator' => ',',
-                                            'digits' => 0,
-                                            'autoGroup' => true,
-                                            'removeMaskOnSubmit' => true,
-                                            'rightAlign' => false,
-                                        ],
-                                        'options' => [
-                                            'class' => 'form-control',
-                                            'onchange' => 'calculateSubtotal($(this))',
-                                        ]
-                                    ]) ?>
-                            </div>
-                        </div> <!-- row -->
-                        <div class="row">
-                            <div class="col-md-3">
-                                <?= $form->field($detail, "[{$i}]ppn")->widget(MaskedInput::class,
-                                    [
-                                        'clientOptions' => [
-                                            'alias' => 'numeric',
-                                            'groupSeparator' => ',',
-                                            'digits' => 2,
-                                            'autoGroup' => true,
-                                            'removeMaskOnSubmit' => true,
-                                            'rightAlign' => false,
-                                        ],
-                                        'options' => [
-                                            'class' => 'form-control',
-                                            'readonly' => true
-                                        ]
-                                    ]) ?>
-                            </div>
-                            <div class="col-md-3">
-                                <?= $form->field($detail, "[{$i}]dpp")->widget(MaskedInput::class,
-                                    [
-                                        'clientOptions' => [
-                                            'alias' => 'numeric',
-                                            'groupSeparator' => ',',
-                                            'digits' => 0,
-                                            'autoGroup' => true,
-                                            'removeMaskOnSubmit' => true,
-                                            'rightAlign' => false,
-                                        ],
-                                        'options' => [
-                                            'class' => 'form-control',
-                                            'readonly' => true
-                                        ]
-                                    ]) ?>
-                            </div>
-                            <div class="col-md-4">
-                                <?= $form->field($detail, "[{$i}]total")->widget(MaskedInput::class,
-                                    [
-                                        'clientOptions' => [
-                                            'alias' => 'numeric',
-                                            'groupSeparator' => ',',
-                                            'digits' => 0,
-                                            'autoGroup' => true,
-                                            'removeMaskOnSubmit' => true,
-                                            'rightAlign' => false,
-                                        ],
-                                        'options' => [
-                                            'class' => 'form-control',
-                                            'readonly' => true
-                                        ]
-                                    ]) ?>
-                            </div>
-                        </div> <!-- row -->
-                        
-                
-                    </div> <!-- item card-body -->
-                </div> <!-- card -->
-            </div> <!-- item row -->
+            <?php
+                // necessary for update action.
+                if (! $detail->isNewRecord) {
+                    echo Html::activeHiddenInput($detail, "[{$i}]id");
+                }
+            ?>
+            <!-- sub card -->
+            <div class="card item">
+                <div class="card-header">
+                    <span class="card-item-title" style="color: blue;">Item : <?= ($i+1) ?></span> 
+                    <button type="button" class="float-right remove-item btn btn-danger btn-sm">
+                        <i class="fa fa-minus"></i></button>
+                </div>
+                <div class="card-body">
+                    <table style="width: fit-content">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <?= $form->field($detail, "[{$i}]item_id")->widget(Select2::class, [
+                                                'data' => ArrayHelper::map(\app\models\ItemSparepart::find()->where(['listed' => 1])->all(), 'id', 'name'),
+                                                'language' => 'en',
+                                                'options' => ['placeholder' => 'Select item ...'],
+                                                'pluginOptions' => [
+                                                    'allowClear' => true,
+                                                ],
+                                            ]);
+                                    ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]brand")->textInput(); ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]serial_no")->textInput(); ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]qty")->widget(MaskedInput::class,
+                                        [
+                                            'clientOptions' => [
+                                                'alias' => 'decimal',
+                                                'groupSeparator' => ',',
+                                                'digits' => 2,
+                                                'autoGroup' => true,
+                                                'removeMaskOnSubmit' => true,
+                                                'rightAlign' => false,
+                                            ],
+                                            'options' => [
+                                                'class' => 'form-control',
+                                                'onchange' => 'calculateSubtotal($(this))',
+                                            ]
+                                        ]) ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]price")->widget(MaskedInput::class,
+                                        [
+                                            'clientOptions' => [
+                                                'alias' => 'numeric',
+                                                'groupSeparator' => ',',
+                                                'digits' => 2,
+                                                'autoGroup' => true,
+                                                'removeMaskOnSubmit' => true,
+                                                'rightAlign' => false,
+                                            ],
+                                            'options' => [
+                                                'class' => 'form-control',
+                                                'onchange' => 'calculateSubtotal($(this))',
+                                            ]
+                                        ]) ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]disc_percent")->widget(MaskedInput::class,
+                                        [
+                                            'clientOptions' => [
+                                                'alias' => 'numeric',
+                                                'groupSeparator' => ',',
+                                                'digits' => 2,
+                                                'autoGroup' => true,
+                                                'removeMaskOnSubmit' => true,
+                                                'rightAlign' => false,
+                                            ],
+                                            'options' => [
+                                                'class' => 'form-control',
+                                                'onchange' => 'calculateSubtotal($(this))',
+                                            ]
+                                        ]) ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]disc_rp")->widget(MaskedInput::class,
+                                        [
+                                            'clientOptions' => [
+                                                'alias' => 'numeric',
+                                                'groupSeparator' => ',',
+                                                'digits' => 0,
+                                                'autoGroup' => true,
+                                                'removeMaskOnSubmit' => true,
+                                                'rightAlign' => false,
+                                            ],
+                                            'options' => [
+                                                'class' => 'form-control',
+                                                'onchange' => 'calculateSubtotal($(this))',
+                                            ]
+                                        ]) ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]ppn")->widget(MaskedInput::class,
+                                        [
+                                            'clientOptions' => [
+                                                'alias' => 'numeric',
+                                                'groupSeparator' => ',',
+                                                'digits' => 2,
+                                                'autoGroup' => true,
+                                                'removeMaskOnSubmit' => true,
+                                                'rightAlign' => false,
+                                            ],
+                                            'options' => [
+                                                'class' => 'form-control',
+                                                'readonly' => true
+                                            ]
+                                        ]) ?>
+                                </td>
+                                <td>
+                                    <?= $form->field($detail, "[{$i}]dpp")->widget(MaskedInput::class,
+                                        [
+                                            'clientOptions' => [
+                                                'alias' => 'numeric',
+                                                'groupSeparator' => ',',
+                                                'digits' => 0,
+                                                'autoGroup' => true,
+                                                'removeMaskOnSubmit' => true,
+                                                'rightAlign' => false,
+                                            ],
+                                            'options' => [
+                                                'class' => 'form-control',
+                                                'readonly' => true
+                                            ]
+                                        ]) ?>
+                                </td>
+                                <td colspan="2">
+                                    <?= $form->field($detail, "[{$i}]total")->widget(MaskedInput::class,
+                                        [
+                                            'clientOptions' => [
+                                                'alias' => 'numeric',
+                                                'groupSeparator' => ',',
+                                                'digits' => 0,
+                                                'autoGroup' => true,
+                                                'removeMaskOnSubmit' => true,
+                                                'rightAlign' => false,
+                                            ],
+                                            'options' => [
+                                                'class' => 'form-control',
+                                                'readonly' => true
+                                            ]
+                                        ]) ?>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> <!-- card-body -->
+            </div> <!-- card item -->
             <?php endforeach; ?>
-        </div> <!-- container-items -->
-        </div> <!-- card-body -->    
+        </div> <!-- card-body -->
     </div> <!-- card -->
     <?php DynamicFormWidget::end(); ?>
     
